@@ -345,7 +345,7 @@ def upgrade() -> None:
                 "system_prompt, user_template, allowed_providers, "
                 "version, is_system, created_by, forked_from_id, metadata) "
                 "VALUES (:id, :ts, :ts, :k, :n, :d, :sp, :ut, NULL, "
-                "1, 1, NULL, NULL, :meta)"
+                "1, TRUE, NULL, NULL, :meta)"
             ).bindparams(
                 id=str(uuid.uuid4()),
                 ts=now,

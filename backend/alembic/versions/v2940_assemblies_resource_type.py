@@ -61,13 +61,19 @@ def upgrade() -> None:
     # Back-fill: prefer the metadata-stored hint, fall back to a small
     # heuristic on description so legacy assemblies stop showing every
     # row as "material" once the UI starts filtering by type.
+    dialect_name = bind.dialect.name
+    json_path = (
+        "metadata ->> 'resource_type'"
+        if dialect_name == "postgresql"
+        else "json_extract(metadata, '$.resource_type')"
+    )
     bind.execute(
         sa.text(
-            """
+            f"""
             UPDATE oe_assemblies_component
-               SET resource_type = json_extract(metadata, '$.resource_type')
+               SET resource_type = {json_path}
              WHERE resource_type IS NULL
-               AND json_extract(metadata, '$.resource_type') IS NOT NULL
+               AND {json_path} IS NOT NULL
             """
         )
     )
